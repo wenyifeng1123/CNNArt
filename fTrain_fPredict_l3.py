@@ -59,7 +59,7 @@ def fTrain3D(sOutPath, model, sModelName, patchSize=None, sInPaths=None, sInPath
         return
 
 
-    callbacks = [EarlyStopping(monitor='val_acc', patience=10, verbose=1)]
+    callbacks = [EarlyStopping(monitor='val_loss', patience=10, verbose=1)]
     callbacks.append(ModelCheckpoint('/home/s1222/no_backup/s1222/checkpoints/checker.hdf5', monitor='val_acc', verbose=0,
         period=5, save_best_only=True))# overrides the last checkpoint, its just for security
     callbacks.append(ReduceLROnPlateau(monitor='loss', factor=0.5, patience=5, min_lr=1e-4, verbose=1))
@@ -140,7 +140,7 @@ def fPredict3D(X,y,  sModelPath, sOutPath, batchSize=64):
 
 ############for_GRID############for_GRID############for_GRID############for_GRID############for_GRID############for_GRID
 def fGridTrain3D(sOutPath, patchSize,sInPaths=None,sInPaths_valid=None,X_train=None, Y_train=None, X_test=None, Y_test=None, architecture='Layers3', CV_Patient=0, model='motion_head'):#rigid for loops for simplicity
-
+    #add for loops here
     sImportString = model + '_3D_architectures_l3'
     cnnModel = __import__(sImportString, globals(), locals(),
                           [],

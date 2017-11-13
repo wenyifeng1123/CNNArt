@@ -12,11 +12,7 @@ import numpy as np                  # for algebraic operations, matrices
 import h5py
 import scipy.io as sio              # I/O
 import os.path                      # operating system
-
 import argparse
-
-from hyperopt import Trials, STATUS_OK, tpe
-from hyperas import optim
 import keras
 import fTrain_fPredict_l3 as trainer_3D
 
@@ -124,6 +120,42 @@ def fLoadMat(sInPath):
     dOut.update(conten)
     return dOut # output dictionary (similar to conten, but with reshaped X_train, ...)
 
+def fLoadDebugData(patchSize):#faster with less data
+    print "--------------loading random debug data-------------------loading random debug data---"
+    iTrainsamps=221
+    mean_diff=0.2
+    var=1
+    X_train1=np.random.normal(0,var, size=((iTrainsamps/2, 1, patchSize[0],patchSize[1],patchSize[2])))
+    X_train2 = np.random.normal(mean_diff, var, size=((iTrainsamps / 2, 1, patchSize[0], patchSize[1], patchSize[2])))
+    X_train=np.concatenate((X_train1, X_train2), axis=0)
+    y1=np.ones(shape=(iTrainsamps/2,1))
+    y2=np.zeros(shape=(iTrainsamps/2,1))
+    Y_1trhalf=np.concatenate((y1, y2), axis=1)
+    Y_2trhalf = np.concatenate((y2, y1), axis=1)
+    Y_train=np.concatenate((Y_1trhalf,Y_2trhalf),axis=0)
+
+    iTestsamps = 123
+    y1 = np.ones(shape=(iTestsamps / 2, 1))
+    y2 = np.zeros(shape=(iTestsamps / 2, 1))
+    X_test1 = np.random.normal(0, var, size=(iTestsamps/2, 1, patchSize[0], patchSize[1], patchSize[2]))
+    X_test2 = np.random.normal(mean_diff, var, size=(iTestsamps / 2, 1, patchSize[0], patchSize[1], patchSize[2]))
+    X_test=np.concatenate((X_test1, X_test2), axis=0)
+    Y_1tehalf = np.concatenate((y1, y2), axis=1)
+    Y_2tehalf = np.concatenate((y2, y1), axis=1)
+    Y_test = np.concatenate((Y_1tehalf, Y_2tehalf), axis=0)
+
+    #shuffle train set
+    pIdx = np.random.permutation(np.arange(len(X_train)))
+    X_train = X_train[pIdx]
+    Y_train = Y_train[pIdx]
+
+    #ps=np.array
+    pS = np.ndarray(shape=(1, 3))
+    pS[0, 0] = patchSize[0]
+    pS[0,1]=patchSize[1]
+    pS[0,2]=patchSize[2]
+
+    return X_train, Y_train, X_test, Y_test, pS
 
 def fLoadMatPred(sInPath):
     if os.path.isfile(sInPath):
@@ -200,8 +232,8 @@ parser.add_argument('-C','--CNN', dest='sModelPath', type=str,
                     help='choose a trained model for predicting, select the _json.txt file!',
                     default='/home/s1222/marvin_stuff/IQA/Codes_FeatureLearning/bestModels/abdomen_3030_lr_0.0001_bs_64.mat')
 parser.add_argument('-a','--architecture', dest='architecture', type=str, help= 'your desired CNN-architecture (only 3D)',
-                    choices=['Layers3', 'VNet',
-                    'VNet_2', 'VNet_3', 'MNet'], default='Layers3')
+                    choices=['3D-CNN', 'VNet',
+                    'VNet_2', 'VNet_3', 'MNet'], default='3D-CNN')
 args = parser.parse_args()
         
 if os.path.isfile(args.outPath[0]):

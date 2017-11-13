@@ -30,7 +30,7 @@ def fCreateModel(patchSize,learningRate=1e-3, optimizer='SGD', architecture='Lay
         optimizer, dr_rate,max_norm)
 
 
-    if architecture=='Layers3':
+    if architecture=='3D-CNN':
         # change to functional API
         input_t = Input(shape=(1, int(patchSize[0, 0]), int(patchSize[0, 1]), int(patchSize[0, 2])))
         seq_t= Dropout(dr_rate)(input_t)
