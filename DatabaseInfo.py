@@ -40,7 +40,6 @@ class DatabaseInfo:
         self.lImgData = [MRData(rows[0],rows[1],rows[2],rows[3]) for rows in reader] # 读MRPhysicsDatabase.csv内容
         ifile.close()
 
-        #用不到
     def get_mrt_model(self):
         #{key: value for key, value in A.__dict__.items() if not key.startswith('__') and not callable(key)}
         return {item.sPath:item.sNumber for item in self.lImgData}
