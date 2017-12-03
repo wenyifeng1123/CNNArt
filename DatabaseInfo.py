@@ -25,6 +25,7 @@ class DatabaseInfo:
 
         self.sPathIn = '/med_data/ImageSimilarity/Databases' + os.sep + self.sDatabase + os.sep + self.sSubDirs[0]
         # parse patients
+        # 把病人的文件夹名字放进lPats里
         self.lPats = [name for name in os.listdir(self.sPathIn) if os.path.isdir(os.path.join(self.sPathIn, name))]
 
         # parse config file (according to set database) => TODO (TK): replace by automatic parsing in directory
@@ -36,9 +37,10 @@ class DatabaseInfo:
         #    if i == 0:
         #        continue
         #    self.lImgData.append(MRData(rows[0],rows[1],rows[2],rows[3]))
-        self.lImgData = [MRData(rows[0],rows[1],rows[2],rows[3]) for rows in reader]
+        self.lImgData = [MRData(rows[0],rows[1],rows[2],rows[3]) for rows in reader] # 读MRPhysicsDatabase.csv内容
         ifile.close()
 
+        #用不到
     def get_mrt_model(self):
         #{key: value for key, value in A.__dict__.items() if not key.startswith('__') and not callable(key)}
         return {item.sPath:item.sNumber for item in self.lImgData}
