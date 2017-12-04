@@ -120,14 +120,16 @@ def fSplitDataset(allPatches, allY, allPats, sSplitting, patchSize, patchOverlap
             return X_trainFold, y_trainFold, X_testFold, y_testFold
 
     elif sSplitting == "crossvalidation_patient":
-        n_splits = len(np.unique(allPats))
+        n_splits = len(np.unique(allPats)) #np.unique找到数组中只出现了一次的数，返回的是这些数的值，n_splits为选的病人个数
         X_trainFold = {}
         X_testFold = {}
         y_trainFold = {}
         y_testFold = {}
         for ind_split in xrange(0, n_splits-1):
-            train_index = allPats != ind_split
-            test_index = allPats == ind_split
+            #train_index = allPats != ind_split
+            #test_index = allPats == ind_split
+            train_index=np.where(allPats != ind_split)
+            test_index = np.where(allPats == ind_split)
             X_train, X_test = allPatches[train_index], allPatches[test_index]
             y_train, y_test = allY[train_index], allY[test_index]
             print(X_train.shape, X_test.shape)
