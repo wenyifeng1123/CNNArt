@@ -31,8 +31,10 @@ elif cfg['sSplitting'] == 'crossvalidation_data':
 elif cfg['sSplitting'] == 'crossvalidation_patient':
     sFSname = 'crossVal'
 
-sOutsubdir = cfg['subdirs'][2]
+sOutsubdir = cfg['subdirs'][2] #sOutsubdir: 'testout'
+#sOutPath CNN/Headcross/4040/testout建立新的文件夹testout
 sOutPath = cfg['selectedDatabase']['pathout'] + os.sep + ''.join(map(str,patchSize)).replace(" ", "") + os.sep + sOutsubdir # + str(ind_split) + '_' + str(patchSize[0]) + str(patchSize[1]) + '.h5'
+#.../4040/crossVal4040.h5
 sDatafile = sOutPath + os.sep + sFSname + ''.join(map(str,patchSize)).replace(" ", "") + '.h5'
 # check if file is already existing -> skip patching
 
@@ -66,11 +68,13 @@ else: # perform patching
     dAllPatches = np.zeros((patchSize[0], patchSize[1], 0))
     dAllLabels = np.zeros(0)
     dAllPats = np.zeros((0, 1))
+    #selectedDatabase值为*id001，所以直接选motion_head的dataref:t1...0002和dataart:t1...0003
     lDatasets = cfg['selectedDatabase']['dataref'] + cfg['selectedDatabase']['dataart']
-    iLabels = cfg['selectedDatabase']['labelref'] + cfg['selectedDatabase']['labelart']
+    iLabels = cfg['selectedDatabase']['labelref'] + cfg['selectedDatabase']['labelart'] #[0,1]
     for ipat, pat in enumerate(dbinfo.lPats):
         for iseq, seq in enumerate(lDatasets):
             # patches and labels of reference/artifact
+            #import utils.DataPreprocessing as datapre
             tmpPatches, tmpLabels  = datapre.fPreprocessData(os.path.join(dbinfo.sPathIn, pat, dbinfo.sSubDirs[1], seq), cfg['patchSize'], cfg['patchOverlap'], 1 )
             dAllPatches = np.concatenate((dAllPatches, tmpPatches), axis=2)
             dAllLabels = np.concatenate((dAllLabels, iLabels[iseq]*tmpLabels), axis=0)
